@@ -17,6 +17,7 @@ class Participants extends Component {
 
     return (
       <div className="Participants">
+        <h3>Participants.js</h3>
         {participantItems}
       </div>
     );
