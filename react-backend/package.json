@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "bcrypt": "^2.0.1",
     "express": "^4.16.2",
     "firebase": "^4.13.1",
     "prop-types": "^15.6.1",
