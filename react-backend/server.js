@@ -28,6 +28,10 @@ app.use(express.static(path.join(__dirname, 'public/html')));*/
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
+app.post('/api/auth', (req, res) => {
+  res.status(400).json({ errors: { global: "Invalid credentials" }});
+});
+
 app.get('/projects/:projectid', (req, res) => {
 
   var projectid = "" + req.params.projectid;
