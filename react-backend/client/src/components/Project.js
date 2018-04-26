@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import Participants from './Participants';
+import ConfirmEmailMessage from './messages/ConfirmEmailMessage';
 
 class Project extends Component {
 
-  constructor(){
-    super();
+  constructor(props){
+    super(props);
     this.state = {
     }
   }
@@ -41,6 +44,7 @@ class Project extends Component {
 
     return (
       <div className="Project">
+        {!this.props.isConfirmed && <ConfirmEmailMessage />}
         {this.props.match.params.project}
         <h2>Project.js</h2>
         <Participants participants={this.state.participants} />
@@ -49,4 +53,14 @@ class Project extends Component {
   }
 }
 
-export default Project;
+Project.propTypes = {
+  isConfirmed: PropTypes.bool.isRequired
+}
+
+function mapStateToProps(state){
+  return {
+    isConfirmed: !!state.user.confirmed
+  }
+}
+
+export default connect(mapStateToProps)(Project);

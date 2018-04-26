@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { HashRouter, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Route, Link, Switch } from 'react-router-dom';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
@@ -14,6 +14,8 @@ import Project from './components/Project';
 import LoginPage from './components/pages/LoginPage';
 import rootReducer from './rootReducer';
 import { userLoggedIn } from './actions/auth';
+import UserRoute from './components/routes/UserRoute';
+import GuestRoute from './components/routes/GuestRoute';
 
 const root = document.getElementById('root');
 const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));
@@ -24,14 +26,14 @@ if(localStorage.skillboardJWT){
 }
 
 ReactDOM.render(
-    <HashRouter>
+    <BrowserRouter>
         <Provider store={store}>
-            <div>
-                <Route exact path="/" component={App} />
-                <Route path="/projects/:project" component={Project} />
-                <Route path="/login" component={LoginPage} /> 
-            </div>
+            <Switch>
+                <Route exact path="/" exact component={App} />
+                <UserRoute path="/projects/:project" exact component={Project} />
+                <GuestRoute path="/login" exact component={LoginPage} /> 
+            </Switch>
         </Provider>
-    </HashRouter>
+    </BrowserRouter>
 , root);
 registerServiceWorker();
