@@ -1,23 +1,27 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 
 import Project from './components/Project';
 
 import './App.css';
 
-class App extends Component {
+const App = ({ isAuthenticated }) => (
+  <div>
+      <h1>Skillboard</h1>
+      { isAuthenticated ? <button>Logout</button> : <Link to='/login'>Login</Link> }
+  </div>
+);
 
-  //Main constructor for states
+App.propTypes = {
+  isAuthenticated: PropTypes.bool.isRequired
+}
 
-  render() {
-    return (
-      //Paste the Participantlist-Layout in the root layout
-      <div className="App">
-          <h1>Skillboard</h1>
-          <Link to='/login'>Login</Link>
-      </div>
-    );
+function mapStateToProps(state) {
+  return{
+      isAuthenticated: !!state.user.token
   }
 }
 
-export default App;
+export default connect(mapStateToProps)(App);
