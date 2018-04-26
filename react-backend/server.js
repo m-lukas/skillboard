@@ -1,14 +1,18 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-const firebase = require('firebase').initializeApp({
-  serviceAccount: './skillboard-service-account.json',
-  databaseURL: 'https://skillboard-test.firebaseio.com/'
-});
+const dotenv = require('dotenv');
+
 
 import auth from './routes/auth';
 
-var ref = firebase.database().ref();
+dotenv.config();
+
+const firebase = require('firebase').initializeApp({
+  serviceAccount: './skillboard-service-account.json',
+  databaseURL: process.env.FIREBASE_DB_URL
+});
+var ref = firebase.database().ref().child('projects');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -26,7 +30,7 @@ app.get('/projects/:projectid', (req, res) => {
   var projectid = "" + req.params.projectid;
   var userList = [];
 
-  ref.child("projects" + projectid + "/users").once('value').then(function(snapshot){
+  ref.child(projectid + "/users").once('value').then(function(snapshot){
     snapshot.forEach(function(data) {
 
       var userObject = data.val();
