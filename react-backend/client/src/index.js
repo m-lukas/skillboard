@@ -13,9 +13,15 @@ import registerServiceWorker from './registerServiceWorker';
 import Project from './components/Project';
 import LoginPage from './components/pages/LoginPage';
 import rootReducer from './rootReducer';
+import { userLoggedIn } from './actions/auth';
 
 const root = document.getElementById('root');
 const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));
+
+if(localStorage.skillboardJWT){
+    const user = { token: localStorage.skillboardJWT };
+    store.dispatch(userLoggedIn(user));
+}
 
 ReactDOM.render(
     <HashRouter>
