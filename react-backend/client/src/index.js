@@ -12,6 +12,7 @@ import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import Project from './components/Project';
 import LoginPage from './components/pages/LoginPage';
+import SignUpPage from './components/pages/SignUpPage';
 import rootReducer from './rootReducer';
 import { userLoggedIn } from './actions/auth';
 import UserRoute from './components/routes/UserRoute';
@@ -31,7 +32,8 @@ ReactDOM.render(
             <Switch>
                 <Route exact path="/" exact component={App} />
                 <UserRoute path="/projects/:project" exact component={Project} />
-                <GuestRoute path="/login" exact component={LoginPage} /> 
+                <GuestRoute path="/login" exact component={LoginPage} />
+                <GuestRoute path="/signup" exact component={SignUpPage} /> 
             </Switch>
         </Provider>
     </BrowserRouter>

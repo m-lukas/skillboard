@@ -3,8 +3,8 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const dotenv = require('dotenv');
 
-
 import auth from './routes/auth';
+import users from './routes/users';
 
 dotenv.config();
 
@@ -19,7 +19,9 @@ const port = process.env.PORT || 5000;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
+
 app.use('/api/auth', auth);
+app.use('/api/users', users);
 
 app.post('/api/auth', (req, res) => {
   res.status(400).json({ errors: { global: "Invalid credentials" }});

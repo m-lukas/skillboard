@@ -1,4 +1,4 @@
-import { USER_LOGGED_IN, USER_LOGGED_OUT } from '../types'
+import { USER_LOGGED_IN, USER_LOGGED_OUT } from '../types';
 import api from '../api';
 
 export const userLoggedIn = (user) => ({
@@ -19,5 +19,11 @@ export const login = (credentials) => dispatch =>
 
 export const logout = () => dispatch => {
         localStorage.removeItem('skillboardJWT');
-        dispatch(userLoggedOut())
+        dispatch(userLoggedOut());
     };
+
+export const signup = credentials => dispatch => 
+    api.user.signup(credentials).then(user => {
+        localStorage.skillboardJWT = user.token;
+        dispatch(userLoggedIn(user));
+    });
