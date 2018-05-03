@@ -5,12 +5,13 @@ import { firebaseInstance } from '../../configs/database';
 var ref = firebaseInstance.database().ref().child('projects');
 const router = express.Router();
 
-router.get('/:projectid', (req, res) => {
+router.post('/', (req, res) => {
 
-  var projectid = req.params.projectid;
+  const { project } = req.body;
+
   var userList = [];
 
-  ref.child(projectid + "/users").once('value').then(function(snapshot){
+  ref.child(project.projectid + "/users").once('value').then(function(snapshot){
     console.log(snapshot.val());
     snapshot.forEach(function(data) {
 
@@ -22,9 +23,8 @@ router.get('/:projectid', (req, res) => {
       userList.push(userObject);
 
     });
-    res.json(userList);
+    res.json({ project: { participants: userList }});
   });
-
 });
 
 export default router;

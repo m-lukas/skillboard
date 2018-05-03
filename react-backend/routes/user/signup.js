@@ -4,21 +4,25 @@ import jwt from 'jsonwebtoken';
 import uniqid from 'uniqid';
 import firebase from 'firebase';
 import { firebaseInstance } from '../../configs/database';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 var ref = firebase.database().ref().child('users');
 
 const router = express.Router();
 
-const generateJTW = (email) => {
+const generateJTW = (uid, email) => {
     return jwt.sign({
+        uid: uid,
         email: email
     }, process.env.JWT_SECRET);
 }
 
-const toAuthJson = (email) => {
+const toAuthJson = (uid, email) => {
     return{
         email: email,
-        token: generateJTW(email)
+        token: generateJTW(uid, email)
     }
 }
 
@@ -34,16 +38,15 @@ router.post('/', (req, res) => {
             if(snapshot.val()){
                 res.status(400).json({ errors: { global: "Email already exists!"} });
             }else{
+                var uid = uniqid();
                 var userObject = {
                     email: email,
                     passwordHash: encryptPassword(password)
                 }
-
-                ref.child(uniqid()).set(userObject);
-                res.json({ user: toAuthJson(email) });
+                ref.child(uid).set(userObject);
+                res.json({ user: toAuthJson(uid, email) });
             }
         });
-
-})
+});
 
 export default router;

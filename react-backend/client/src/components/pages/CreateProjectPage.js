@@ -6,7 +6,7 @@ import CreateProjectForm from '../forms/CreateProjectForm';
 
 class CreateProjectPage extends Component {
 
-  submit = data => this.props.createProject(data)
+  submit = (data, addition) => this.props.createProject(data, addition)
         .then(() => this.props.history.push("/projects/myproject"));
 
   render() {

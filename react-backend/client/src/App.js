@@ -1,10 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as actions from './actions/auth'
-
-import Project from './components/Project';
 
 import './App.css';
 

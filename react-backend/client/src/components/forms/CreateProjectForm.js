@@ -8,7 +8,6 @@ class CreateProjectForm extends Component {
 
   state = {
       data: {
-          projectid: '',
           projectname: '',
           description: ''
       },
@@ -17,11 +16,11 @@ class CreateProjectForm extends Component {
   }
 
   onChange = e => {
+      var projectname = this.state.data.projectname;
       this.setState({
         ...this.state, 
         data: {...this.state.data, [e.target.name]: e.target.value}
       });
-      this.state.data['projectid'] = this.state.data.projectname;
     }
 
   onSubmit = e => {
@@ -31,7 +30,7 @@ class CreateProjectForm extends Component {
     if(Object.keys(errors).length === 0){
       this.setState({ loading: true });
       this.props
-        .submit(this.state.data)
+        .submit(this.state.data, { projectid: this.state.data.projectname, createdBy: localStorage.skillboardJWT })
         .catch(err => {
             this.setState({ errors: err.response.data.errors, loading: false });
         }
@@ -44,6 +43,10 @@ class CreateProjectForm extends Component {
     const errors = {};
     if(!data.projectname) errors.projectname = "Can't be blank!";
     return errors;
+  }
+
+  vertifyID = projectname => {
+      return projectname
   }
 
   render() {
