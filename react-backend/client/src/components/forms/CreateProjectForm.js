@@ -1,25 +1,28 @@
 import React, { Component } from 'react';
 import { Form, Button, Message } from 'semantic-ui-react';
-import isEmail from 'validator/lib/isEmail';
 import PropTypes from 'prop-types';
 
 import InlineError from '../messages/InlineError';
 
-class SignUpForm extends Component {
+class CreateProjectForm extends Component {
 
   state = {
       data: {
-          email: '',
-          password: ''
+          projectid: '',
+          projectname: '',
+          description: ''
       },
       loading: false,
       errors: {}
   }
 
-  onChange = e => this.setState({
-      ...this.state, 
-      data: {...this.state.data, [e.target.name]: e.target.value}
-    });
+  onChange = e => {
+      this.setState({
+        ...this.state, 
+        data: {...this.state.data, [e.target.name]: e.target.value}
+      });
+      this.state.data['projectid'] = this.state.data.projectname;
+    }
 
   onSubmit = e => {
     e.preventDefault();
@@ -39,8 +42,7 @@ class SignUpForm extends Component {
 
   validate = (data) => {
     const errors = {};
-    if(!isEmail(data.email)) errors.email = "Invalid email!";
-    if(!data.password) errors.password = "Can't be blank!";
+    if(!data.projectname) errors.projectname = "Can't be blank!";
     return errors;
   }
 
@@ -54,40 +56,37 @@ class SignUpForm extends Component {
                     <p>{errors.global}</p>
                 </Message>
             )}
-            <Form.Field error={!!errors.email}>
-                <label htmlFor="email">Email</label>
+            <Form.Field error={!!errors.projectname}>
+                <label>Projectname</label>
                 <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="example@example.com"
-                    value={data.email}
+                    type="text"
+                    id="projectname"
+                    name="projectname"
+                    value={data.projectname}
                     onChange={this.onChange}
                 />
-                {errors.email && <InlineError text={errors.email} />}
+                { errors.projectname && <InlineError text={errors.projectname}/> }
+                <label>skillboard.io/projects/{data.projectname}</label>
             </Form.Field>
-
-            <Form.Field error={!!errors.password}>
-                <label htmlFor="password">Password</label>
+            <Form.Field error={!!errors.description}>
+                <label>Description</label>
                 <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Secure password"
-                    value={data.password}
+                    type="text"
+                    id="description"
+                    name="description"
+                    value={data.description}
                     onChange={this.onChange}
                 />
-                {errors.password && <InlineError text={errors.password} />}
+                { errors.description && <InlineError text={errors.description}/> }
             </Form.Field>
-
-            <Button primary>Sign Up</Button>
+            <Button primary>Create Project</Button>
         </Form>
     );
   }
 }
 
-SignUpForm.propTypes = {
+CreateProjectForm.propTypes = {
   submit: PropTypes.func.isRequired
 }
 
-export default SignUpForm;
+export default CreateProjectForm;

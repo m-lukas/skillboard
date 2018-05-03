@@ -7,7 +7,7 @@ import { signup } from '../../actions/auth';
 class SignUpPage extends Component {
 
   submit = data => this.props.signup(data)
-    .then(() => this.props.history.push("/projects/myproject"));
+      .then(() => this.props.history.push("/projects/myproject"));
 
   render() {
 

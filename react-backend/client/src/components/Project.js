@@ -32,7 +32,7 @@ class Project extends Component {
   
     //Retrieve Participantlist from Express
     callApi = async (project) => {
-      const response = await fetch('/projects/' + project);
+      const response = await fetch('/api/project/get/' + project);
       const body = await response.json();
   
       if (response.status !== 200) throw Error(body.message);

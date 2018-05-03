@@ -2,14 +2,9 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import uniqid from 'uniqid';
-const dotenv = require('dotenv');
+import firebase from 'firebase';
+import { firebaseInstance } from '../../configs/database';
 
-dotenv.config();
-
-const firebase = require('firebase').initializeApp({
-    serviceAccount: './skillboard-service-account.json',
-    databaseURL: process.env.FIREBASE_DB_URL
-  }, "userSignUp");
 var ref = firebase.database().ref().child('users');
 
 const router = express.Router();
