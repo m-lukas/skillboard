@@ -10,8 +10,8 @@ export default {
     project: {
         create: (data, addition) =>
             axios.post('/api/project/create', { data, addition }).then(res => res.data.project),
-        join: project =>
-            axios.post('/api/project/join', { project }).then(res => res.data.project),
+        join: (user, project) =>
+            axios.post('/api/project/join', { user, project }).then(res => res.data.project),
         get: project =>
             axios.post('/api/project/get', { project }).then(res => res.data.project)
     }

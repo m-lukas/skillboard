@@ -8,7 +8,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-var ref = firebase.database().ref().child('users');
+var ref = firebaseInstance.database().ref().child('auth');
 
 const router = express.Router();
 

@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import firebase from 'firebase';
 import { firebaseInstance } from '../../configs/database';
 
-var ref = firebase.database().ref().child('projects');
+var ref = firebaseInstance.database().ref().child('projects');
 
 const router = express.Router();
 
@@ -19,17 +19,15 @@ router.post('/', (req, res) => {
             if(snapshot.val()){
                 res.status(400).json({ errors: { global: "Project-id already taken!"} });
             }else{
-                var uid = decodeJWT(createdBy).uid;
-                console.log(uid);
-                var projectObject = {
+                let uid = decodeJWT(createdBy).uid;
+                let projectObject = {
                     projectname: projectname,
                     description: description,
                     createdBy: uid,
                     users: {}
                 }
-                projectObject.users[uid] = { skills:"" };
                 ref.child(projectid).set(projectObject);
-                res.json({ project: { participants: [projectObject.users] }});
+                res.json({ project: { projectid: projectid, projectname: projectname, participants: [] }});
             }
         });
 });
