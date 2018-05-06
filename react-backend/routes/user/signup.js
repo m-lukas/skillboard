@@ -43,6 +43,7 @@ router.post('/', (req, res) => {
                     email: email,
                     passwordHash: encryptPassword(password)
                 }
+                var projects = [];
                 ref.child(uid).set(userObject);
                 res.json({ user: toAuthJson(uid, email) });
             }

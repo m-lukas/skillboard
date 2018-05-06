@@ -16,7 +16,6 @@ class CreateProjectForm extends Component {
   }
 
   onChange = e => {
-      var projectname = this.state.data.projectname;
       this.setState({
         ...this.state, 
         data: {...this.state.data, [e.target.name]: e.target.value}

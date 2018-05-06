@@ -24,10 +24,16 @@ router.post('/', (req, res) => {
                     projectname: projectname,
                     description: description,
                     createdBy: uid,
-                    users: {}
+                    users: ''
                 }
                 ref.child(projectid).set(projectObject);
-                res.json({ project: { projectid: projectid, projectname: projectname, participants: [] }});
+                res.json({ project: {
+                    existing: true,
+                    joined: false,
+                    projectid: projectid, 
+                    projectname: projectname,
+                    description: description
+                }});
             }
         });
 });

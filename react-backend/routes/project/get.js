@@ -1,41 +1,70 @@
 import express from 'express';
 import firebase from 'firebase';
 import { firebaseInstance } from '../../configs/database';
+import jwt from 'jsonwebtoken';
 
 var ref = firebaseInstance.database().ref();
 var projectRef = ref.child('projects');
 var userRef = ref.child('users');
 const router = express.Router();
 
-const asyncForEach = async (obj,callback) => {
-  for(let index = 0; index < Object.keys(obj).length; index++){
-    let key = Object.keys(obj)[index];
-    await callback({key: key, data: obj[key]}, index, obj);
+const asyncForEach = async (array,callback) => {
+  for(let index = 0; index < array.length; index++){
+    await callback(array[index], index, array);
   }
 }
 
+const decodeJWT = token => {
+  return jwt.decode(token, process.env.JWT_SECRET);
+}
+
 router.post('/', (req, res) => {
-  const { project } = req.body;
+  console.log(req.body);
+  const { projectid, token } = req.body.data;
   var userList = [];
 
-  projectRef.child(project.projectid).once('value').then(async projectData => {
-    await asyncForEach(projectData.val().users, async (user) => {
-      let keyNumber = 1;
-      let userObject = {key: keyNumber};
-      const userData = await userRef.child(user.key).once('value');
-      Object.assign(userObject, user.data, userData.val());
-      userList.push(userObject);
-      keyNumber++;
-    });
-    res.json({ 
-      project: { 
-        projectid: projectData.val().projectid, 
-        projectname: projectData.val().projectname, 
-        description: projectData.val().description, 
-        participants: userList, 
-        createdBy: projectData.val().createdBy 
+  projectRef.child(projectid).once('value').then(async snapshot => {
+    let projectData = snapshot.val();
+    if(projectData){
+      var usersString = projectData.users;
+      if(usersString.includes(decodeJWT(token).uid)){
+        await asyncForEach(usersString.split(','), async (user) => {
+          let keyNumber = 1;
+          let userObject = {key: keyNumber};
+          const userData = await userRef.child(user + '/projects/' + projectid).once('value');
+          Object.assign(userObject, userData.val());
+          userList.push(userObject);
+          keyNumber++;
+        });
+        res.json({ 
+          project: {
+            existing: true,
+            joined: true, 
+            projectid: projectData.projectid, 
+            projectname: projectData.projectname, 
+            description: projectData.description, 
+            participants: userList, 
+            createdBy: projectData.createdBy 
+          }
+        });
+      }else{
+        res.json({ 
+          project: {
+            existing: true,
+            joined: false, 
+            projectid: projectid,
+            projectname: projectData.projectname,
+            description: projectData.description
+          }
+        });
       }
-    });
+    }else{
+      res.json({
+        project: {
+          existing: false
+        }
+      });
+    }
   });
 });
 

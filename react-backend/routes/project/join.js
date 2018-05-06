@@ -14,43 +14,53 @@ var userRef = ref.child('users');
 
 const router = express.Router();
 
+const asyncForEach = async (array,callback) => {
+    for(let index = 0; index < array.length; index++){
+      await callback(array[index], index, array);
+    }
+  }
+
 const decodeJWT = token => {
     return jwt.decode(token, process.env.JWT_SECRET);
 }
 
 router.post('/', (req, res) => {
-    const { token, first_name, last_name, skills, socialmedia } = req.body.user;
-    const { projectid } = req.body.project;
+    const { token, projectid, first_name, last_name, email, skills } = req.body.data;
     let uid = decodeJWT(token).uid;
-    projectRef.child(id + '/users').orderByKey().equalTo(uid).once('value')
-        .then( async snapshot => {
-            if(snapshot.val()){
-                res.status(400).json({ errors: { global: "Already joined!"} });
-            }else{
-                const projectDataRequest = await projectRef.child(projectid).once('value');
-                const users = await userRef.child(uid).once('value');
-                if(users){
-                    let projectData = projectDataRequest.val();
-                    projectRef.child('users/' + uid).set({ 
-                        first_name: first_name, 
-                        last_name: last_name, 
-                        skills: skills, 
-                        socialmedia: socialmedia 
-                    });
-                    res.json({ project: {
-                         projectid: projectid, 
-                         projectname: projectData.projectname, 
-                         description: projectData.description, 
-                         participants: [projectData.users], 
-                         createdBy: projectData.createdBy 
-                    }});
-                }else{
-                    //todo
-                    res.status(400).json({ errors: { global: "FATAL ERROR!"} });
-                }
+    projectRef.child(projectid).once('value').then(async projectSnapshot => {
+        let projectData = projectSnapshot.val();
+        if(projectData.users.includes(uid)){
+            res.status(400).json({ errors: { global: "Already joined!"} });
+        }else{
+            var newUsersString = projectData.users + "," + uid; 
+            projectRef.child(projectid + '/users').set(newUsersString);
+            let userObject = {
+                first_name: first_name,
+                last_name: last_name,
+                email: email,
+                skills: skills
             }
-        });
-    
+            await userRef.child(uid + '/projects/' + projectid).set(userObject);
+            var userList = [];
+            await asyncForEach(newUsersString.split(','), async (user) => {
+                let keyNumber = 1;
+                let userObject = {key: keyNumber};
+                const userData = await userRef.child(user + '/projects/' + projectid).once('value');
+                Object.assign(userObject, userData.val());
+                userList.push(userObject);
+                keyNumber++; 
+            });
+            res.json({ project: {
+                existing: true,
+                joined: true,
+                projectid: projectid, 
+                projectname: projectData.projectname, 
+                description: projectData.description, 
+                participants: userList, 
+                createdBy: projectData.createdBy 
+           }});
+        }
+    });
 });
 
 export default router;

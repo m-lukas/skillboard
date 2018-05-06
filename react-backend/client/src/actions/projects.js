@@ -21,8 +21,8 @@ export const createProject = (data, addition) => dispatch =>
         dispatch(projectCreated(project));
     });
 
-export const joinProject = (user, data) => dispatch => 
-    api.project.join(user, data).then(project => {
+export const joinProject = data => dispatch => 
+    api.project.join(data).then(project => {
         dispatch(projectJoined(project));
     });
 
